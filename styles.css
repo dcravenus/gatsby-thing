@@ -12,6 +12,14 @@
 
 @font-face {
   font-family: "Cooper Hewitt";
+  src: url(./CooperHewitt-WebFonts-public/CooperHewitt-BoldItalic.woff)
+    format("woff");
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Cooper Hewitt";
   src: url(./CooperHewitt-WebFonts-public/CooperHewitt-BookItalic.woff)
     format("woff");
   font-weight: normal;
@@ -29,17 +37,18 @@ a {
   margin-bottom: 1em;
   color: #333;
   text-decoration: none;
-  font-family: 120%;
+  font-size: 120%;
 }
 
-a:hover {
-  color: #a19d9d;
+h2 {
+  font-style: italic;
+  margin-bottom: 1.5em;
 }
 
-a:active {
-  color: #333;
+h3 {
+  margin-top: 2em;
 }
 
-a:visited {
-  color: #a19d9d;
+hr {
+  margin-top: 1em;
 }
