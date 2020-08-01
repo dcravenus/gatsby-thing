@@ -1,9 +1,45 @@
+@font-face {
+  font-family: "Cooper Hewitt";
+  src: url(./CooperHewitt-WebFonts-public/CooperHewitt-Book.woff) format("woff"),
+    url(./CooperHewitt-WebFonts-public/CooperHewitt-Book.svg) format("svg");
+}
+
+@font-face {
+  font-family: "Cooper Hewitt";
+  src: url(./CooperHewitt-WebFonts-public/CooperHewitt-Bold.woff) format("woff");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "Cooper Hewitt";
+  src: url(./CooperHewitt-WebFonts-public/CooperHewitt-BookItalic.woff)
+    format("woff");
+  font-weight: normal;
+  font-style: italic;
+}
+
 body {
-  font-family: sans-serif;
+  font-family: "Cooper Hewitt", sans-serif;
   font-size: 110%;
+  color: #333;
 }
 
 a {
   display: inline-block;
-  margin-bottom: 5px;
+  margin-bottom: 1em;
+  color: #333;
+  text-decoration: none;
+  font-family: 120%;
+}
+
+a:hover {
+  color: #a19d9d;
+}
+
+a:active {
+  color: #333;
+}
+
+a:visited {
+  color: #a19d9d;
 }
