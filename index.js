@@ -96,4 +96,11 @@ fetch(url).then(async (response) => {
     }
     console.log("File saved");
   });
+
+  fs.writeFile("index.html", fileContent, (err) => {
+    if (err) {
+      return console.log(err);
+    }
+    console.log("File saved");
+  });
 });
