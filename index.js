@@ -2,10 +2,12 @@ const fs = require("fs");
 const moment = require("moment");
 const { getNytRssData } = require("./fetchNytRss");
 const { getSLTribData } = require("./fetchSLTrib");
+const { getSeriousEatsData } = require("./fetchSeriousEats");
 
 const generateIndexHTML = async () => {
   const nytData = await getNytRssData();
   const sltribData = await getSLTribData();
+  const seriousEatsData = await getSeriousEatsData();
 
   let fileData = `
     <!doctype html>
@@ -20,6 +22,8 @@ const generateIndexHTML = async () => {
   fileData += nytData;
   fileData += "<hr>";
   fileData += sltribData;
+  fileData += "<hr>";
+  fileData += seriousEatsData;
 
   fileData += `</body></html>`;
 
