@@ -21,12 +21,8 @@ exports.getSLTribData = async () => {
   const parser = new Parser();
 
   const feeds = {
-    News: "https://www.sltrib.com/arcio/rss/category/news/?summary=true",
     Religion:
       "https://www.sltrib.com/arcio/rss/category/religion/?summary=true",
-    "Arts & Living":
-      "https://www.sltrib.com/arcio/rss/category/artsliving/?summary=true",
-    Opinion: "https://www.sltrib.com/arcio/rss/category/opinion/?summary=true",
   };
 
   const outputData = [];

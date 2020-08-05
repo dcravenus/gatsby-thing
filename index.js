@@ -1,10 +1,10 @@
 const fs = require("fs");
 const moment = require("moment");
-const { getNYTData } = require("./fetchNYT");
+const { getNytRssData } = require("./fetchNytRss");
 const { getSLTribData } = require("./fetchSLTrib");
 
 const generateIndexHTML = async () => {
-  const nytData = await getNYTData();
+  const nytData = await getNytRssData();
   const sltribData = await getSLTribData();
 
   let fileData = `
