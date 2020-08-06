@@ -18,6 +18,19 @@ exports.getSeriousEatsData = async () => {
   const filteredItems = feed.items.filter(filterItemsByDate);
 
   return filteredItems.reduce((str, item) => {
-    return str + `<a href=${item.link}>` + item.title + "</a><br>" + "\n";
+    let description = item.contentSnippet;
+    const readMoreIdx = description.indexOf("Read More");
+    if (readMoreIdx !== -1) {
+      description = description.slice(0, readMoreIdx);
+    }
+    return (
+      str +
+      `
+      <a href=${item.link}>
+        <h4>${item.title}</h4>
+        <p>${description}</p>
+      </a>
+    `
+    );
   }, `<h2>Serious Eats</h2>`);
 };

@@ -26,6 +26,13 @@
   font-style: italic;
 }
 
+@font-face {
+  font-family: "Cooper Hewitt";
+  src: url(./CooperHewitt-WebFonts-public/CooperHewitt-Semibold.woff)
+    format("woff");
+  font-weight: 500;
+}
+
 body {
   font-family: "Cooper Hewitt", sans-serif;
   font-size: 110%;
@@ -34,19 +41,32 @@ body {
 
 a {
   display: inline-block;
-  margin-bottom: 1em;
   color: #333;
   text-decoration: none;
   font-size: 120%;
+  margin-bottom: 1.5em;
 }
 
 h2 {
   font-style: italic;
   margin-bottom: 1.5em;
+  font-size: 150%;
 }
 
 h3 {
   margin-top: 2em;
+  margin-bottom: 1.5em;
+  font-size: 130%;
+}
+
+h4 {
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: 0.5em;
+}
+
+p {
+  margin: 0;
 }
 
 hr {

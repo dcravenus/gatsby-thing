@@ -13,7 +13,14 @@ const filterItemsByDate = (item) => {
 
 const getStringForSection = (section) => {
   return section.items.reduce((str, item) => {
-    return str + `<a href=${item.link}>` + item.title + "</a><br>" + "\n";
+    return (
+      str +
+      `
+      <a href=${item.link}>
+        <p>${item.title}</p>
+      </a>
+    `
+    );
   }, `<h3>${section.name}</h3>\n`);
 };
 

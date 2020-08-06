@@ -1,5 +1,6 @@
 const fs = require("fs");
 const moment = require("moment");
+const pretty = require("pretty");
 const { getNytRssData } = require("./fetchNytRss");
 const { getSLTribData } = require("./fetchSLTrib");
 const { getSeriousEatsData } = require("./fetchSeriousEats");
@@ -26,6 +27,8 @@ const generateIndexHTML = async () => {
   fileData += seriousEatsData;
 
   fileData += `</body></html>`;
+
+  fileData = pretty(fileData);
 
   fs.writeFile("index.html", fileData, (err) => {
     if (err) {
