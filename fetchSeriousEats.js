@@ -17,20 +17,34 @@ exports.getSeriousEatsData = async () => {
   const feed = await parser.parseURL(feedUrl);
   const filteredItems = feed.items.filter(filterItemsByDate);
 
-  return filteredItems.reduce((str, item) => {
-    let description = item.contentSnippet;
-    const readMoreIdx = description.indexOf("Read More");
-    if (readMoreIdx !== -1) {
-      description = description.slice(0, readMoreIdx);
-    }
-    return (
-      str +
-      `
+  return (
+    filteredItems.reduce(
+      (str, item) => {
+        let description = item.contentSnippet;
+        const readMoreIdx = description.indexOf("Read More");
+        if (readMoreIdx !== -1) {
+          description = description.slice(0, readMoreIdx);
+        }
+        return (
+          str +
+          `
       <a href=${item.link}>
-        <h4>${item.title}</h4>
-        <p>${description}</p>
+        <strong>${item.title}</strong><br>
+        ${description}
       </a>
     `
-    );
-  }, `<h2>Serious Eats</h2>`);
+        );
+      },
+      `
+      <!doctype html>
+      <html>
+        <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href='nyt.css' rel='stylesheet'></style>
+        </head>
+        <body>
+          <h1>Serious Eats</h1>
+  `
+    ) + "</body></html>"
+  );
 };

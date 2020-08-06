@@ -13,6 +13,7 @@
     "moment": "^2.27.0",
     "node-fetch": "^2.6.0",
     "pretty": "^2.0.0",
+    "puppeteer": "^5.2.1",
     "rss-parser": "^3.9.0"
   }
 }

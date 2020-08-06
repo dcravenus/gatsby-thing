@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+const puppeteer = require("puppeteer");
 const { JSDOM } = require("jsdom");
 
 exports.getNYTData = async () => {
@@ -12,9 +12,13 @@ exports.getNYTData = async () => {
 
   const url = `https://nytimes.com/issue/todayspaper/${dateString}/todays-new-york-times`;
 
-  const response = await fetch(url);
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url);
+  const text = await page.evaluate(() => document.documentElement.outerHTML);
 
-  const text = await response.text();
+  await browser.close();
+
   const dom = new JSDOM(text);
   const document = dom.window.document;
 
@@ -71,21 +75,39 @@ exports.getNYTData = async () => {
     };
   });
 
-  const fileContent = sections.reduce((str, section) => {
-    let sectionStr = "<h3>" + section.heading.trim() + "</h3>" + "\n";
-    section.links.forEach((link) => {
-      sectionStr +=
-        '<a href="https://nytimes.com' +
-        link.href +
-        '">' +
-        link.title +
-        "</a>" +
-        "<br>" +
-        "\n";
-    });
+  const fileContent = sections.reduce(
+    (str, section) => {
+      let sectionStr = "<h2>" + section.heading.trim() + "</h2>" + "\n";
+      section.links.forEach((link) => {
+        sectionStr +=
+          '<a href="https://nytimes.com' +
+          link.href +
+          '">' +
+          link.title +
+          "</a>" +
+          "<br>" +
+          "\n";
+      });
 
-    return str + sectionStr;
-  }, `<h2>The New York Times</h2>`);
+      return str + sectionStr;
+    },
+    `
+    <!doctype html>
+    <html>
+      <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href='nyt.css' rel='stylesheet'></style>
+      </head>
+      <body>
+        <h1>The New York Times</h1>
+  `
+  );
 
-  return fileContent;
+  return (
+    fileContent +
+    `
+    </body>
+    </html>
+  `
+  );
 };

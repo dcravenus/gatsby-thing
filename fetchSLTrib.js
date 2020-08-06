@@ -17,7 +17,7 @@ const getStringForSection = (section) => {
       str +
       `
       <a href=${item.link}>
-        <p>${item.title}</p>
+        ${item.title}
       </a>
     `
     );
@@ -28,8 +28,11 @@ exports.getSLTribData = async () => {
   const parser = new Parser();
 
   const feeds = {
+    News: "https://www.sltrib.com/arcio/rss/category/news/?summary=true",
     Religion:
       "https://www.sltrib.com/arcio/rss/category/religion/?summary=true",
+    "Bagley Cartoon":
+      "https://www.sltrib.com/arcio/rss/category/opinion/bagley/?summary=true",
   };
 
   const outputData = [];
@@ -43,7 +46,21 @@ exports.getSLTribData = async () => {
     });
   }
 
-  return outputData.reduce((str, section) => {
-    return str + getStringForSection(section);
-  }, `<h2>The Salt Lake Tribune</h2>`);
+  return (
+    outputData.reduce(
+      (str, section) => {
+        return str + getStringForSection(section);
+      },
+      `
+    <!doctype html>
+    <html>
+      <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href='nyt.css' rel='stylesheet'></style>
+      </head>
+      <body>
+        <h1>The Salt Lake Tribune</h1>
+  `
+    ) + "</body></html>"
+  );
 };
