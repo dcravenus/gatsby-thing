@@ -9,6 +9,7 @@ const { getCooksIllustratedData } = require("./fetchCooksIllustrated");
 const { getEconomistData } = require("./fetchEconomist");
 const { getNewYorkerData } = require("./fetchNewYorker");
 const { getHackerNewsData } = require("./fetchHackerNews");
+const { getPodmassData } = require("./fetchPodmass");
 
 const generateHTMLFromData = async (filename, fileData) => {
   fs.writeFile(filename, pretty(fileData), (err) => {
@@ -50,6 +51,7 @@ const getAsterisks = async ({
   cooksIllustratedData,
   economistData,
   newYorkerData,
+  podmassData,
 }) => {
   const previousIssues = await getPreviousIssueDate();
 
@@ -58,6 +60,7 @@ const getAsterisks = async ({
     cooksIllustrated: cooksIllustratedData.issueDate,
     economist: economistData,
     newYorker: newYorkerData,
+    podmass: podmassData,
   };
   writeIssueData(JSON.stringify(issues));
 
@@ -69,70 +72,97 @@ const getAsterisks = async ({
     issues.economist !== previousIssues.economist ? "*" : "";
   const newYorkerAsterisk =
     issues.newYorker !== previousIssues.newYorker ? "*" : "";
+  const podmassAsterisk = issues.podmass !== previousIssues.podmass ? "*" : "";
 
   return {
     gastronomicaAsterisk,
     cooksIllustratedAsterisk,
     economistAsterisk,
     newYorkerAsterisk,
+    podmassAsterisk,
   };
 };
 
 const generateIndexHTML = async () => {
   generateHTMLFromData("nyt.html", await getNYTData());
   generateHTMLFromData("sltrib.html", await getSLTribData());
-  generateHTMLFromData("seriouseats.html", await getSeriousEatsData());
+
+  const seriousEatsData = await getSeriousEatsData();
+  if (seriousEatsData) {
+    generateHTMLFromData("seriouseats.html", seriousEatsData);
+  }
+
   generateHTMLFromData("hackernews.html", await getHackerNewsData());
   const gastroData = await getGastronomicaData();
   generateHTMLFromData("gastronomica.html", gastroData.fileData);
   const cooksIllustratedData = await getCooksIllustratedData();
   const economistData = await getEconomistData();
   const newYorkerData = await getNewYorkerData();
+  const podmassData = await getPodmassData();
 
   const {
     gastronomicaAsterisk,
     cooksIllustratedAsterisk,
     economistAsterisk,
     newYorkerAsterisk,
+    podmassAsterisk,
   } = await getAsterisks({
     gastroData,
     cooksIllustratedData,
     economistData,
     newYorkerData,
+    podmassData,
   });
 
-  let newYorkerChunk = "";
-  if (newYorkerAsterisk) {
-    newYorkerChunk = `
+  const newYorkerChunk = `
       <a href="https://www.newyorker.com/magazine">
         <h2>The New Yorker</h2>
         <p>${newYorkerData}</p>
       </a>
       <br>
     `;
-  }
 
-  let economistChunk = "";
-  if (economistAsterisk) {
-    economistChunk = `
+  const economistChunk = `
       <a href="https://www.economist.com/weeklyedition">
         <h2>The Economist</h2>
         <p>${economistData}</p>
       </a>
       <br>
     `;
-  }
 
-  let cooksIllustratedChunk = "";
-  if (cooksIllustratedAsterisk) {
-    cooksIllustratedChunk = `
+  const cooksIllustratedChunk = `
       <a href="${cooksIllustratedData.url}">
         <h2>Cook's Illustrated${cooksIllustratedAsterisk}</h2>
         <p>${cooksIllustratedData.issueDate}</p>
       </a>
       <br>
     `;
+
+  let seriousEatsChunk = "";
+  if (seriousEatsData) {
+    seriousEatsChunk = `
+    <a href="seriouseats.html">
+      <h2>Serious Eats</h2>
+      <p>Last 24 Hours</p>
+    </a>
+    <br>
+    `;
   }
+
+  const gastronomicaChunk = `
+    <a href="gastronomica.html">
+      <h2>Gastronomica</h2>
+      <p>${gastroData.title}</p>
+    </a>
+    <br>
+  `;
+
+  const podmassChunk = `
+    <a href="${podmassData}">
+      <h2>Podmass</h2>
+    </a>
+    <br>
+  `;
 
   let fileData = `
     <!doctype html>
@@ -153,23 +183,18 @@ const generateIndexHTML = async () => {
             <p>Last 24 Hours</p>
           </a>
           <br>
-          <a href="seriouseats.html">
-            <h2>Serious Eats</h2>
-            <p>Last 24 Hours</p>
-          </a>
-          <br>
+          ${seriousEatsChunk}
           <a href="hackernews.html">
             <h2>Hacker News</h2>
             <p>Best 25 Stories</p>
           </a>
           <br>
-          ${newYorkerChunk}
-          ${economistChunk}
-          ${cooksIllustratedChunk}
-          <a href="gastronomica.html">
-            <h2>Gastronomica${gastronomicaAsterisk}</h2>
-            <p>${gastroData.title}</p>
-          </a>
+          ${newYorkerAsterisk ? newYorkerChunk : ""}
+          ${economistAsterisk ? economistChunk : ""}
+          ${cooksIllustratedAsterisk ? cooksIllustratedChunk : ""}
+          ${gastronomicaAsterisk ? gastronomicaChunk : ""}
+          ${podmassAsterisk ? podmassChunk : ""}
+          <a href="older.html">Older</a>
           <br>
         </body>
       </html>
@@ -177,11 +202,37 @@ const generateIndexHTML = async () => {
 
   fileData = pretty(fileData);
 
+  let olderFileData = `
+    <!doctype html>
+    <html>
+      <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href='index.css' rel='stylesheet'></style>
+      </head>
+      <body>
+        ${!newYorkerAsterisk ? newYorkerChunk : ""}
+        ${!economistAsterisk ? economistChunk : ""}
+        ${!cooksIllustratedAsterisk ? cooksIllustratedChunk : ""}
+        ${!gastronomicaAsterisk ? gastronomicaChunk : ""}
+        ${!podmassAsterisk ? podmassChunk : ""}
+      </body>
+    </html>
+  `;
+
+  olderFileData = pretty(olderFileData);
+
   fs.writeFile("index.html", fileData, (err) => {
     if (err) {
       return console.log(err);
     }
     console.log("File saved");
+  });
+
+  fs.writeFile("older.html", olderFileData, (err) => {
+    if (err) {
+      return console.log(err);
+    }
+    console.log("Older file saved");
   });
 };
 

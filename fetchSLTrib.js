@@ -12,6 +12,9 @@ const filterItemsByDate = (item) => {
 };
 
 const getStringForSection = (section) => {
+  if (!section.items.length) {
+    return "";
+  }
   return section.items.reduce((str, item) => {
     return (
       str +

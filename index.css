@@ -51,3 +51,7 @@ a {
   color: #333;
   text-decoration: none;
 }
+
+hr {
+  margin: 30px 0;
+}

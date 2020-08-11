@@ -17,6 +17,10 @@ exports.getSeriousEatsData = async () => {
   const feed = await parser.parseURL(feedUrl);
   const filteredItems = feed.items.filter(filterItemsByDate);
 
+  if (filteredItems.length === 0) {
+    return "";
+  }
+
   return (
     filteredItems.reduce(
       (str, item) => {
