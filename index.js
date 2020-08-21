@@ -10,6 +10,7 @@ const { getEconomistData } = require("./fetchEconomist");
 const { getNewYorkerData } = require("./fetchNewYorker");
 const { getHackerNewsData } = require("./fetchHackerNews");
 const { getPodmassData } = require("./fetchPodmass");
+const { getNeedleDropData } = require("./fetchNeedleDrop");
 
 const generateHTMLFromData = async (filename, fileData) => {
   fs.writeFile(filename, pretty(fileData), (err) => {
@@ -52,6 +53,7 @@ const getAsterisks = async ({
   economistData,
   newYorkerData,
   podmassData,
+  needleDropData,
 }) => {
   const previousIssues = await getPreviousIssueDate();
 
@@ -61,6 +63,7 @@ const getAsterisks = async ({
     economist: economistData,
     newYorker: newYorkerData,
     podmass: podmassData,
+    needleDrop: needleDropData,
   };
   writeIssueData(JSON.stringify(issues));
 
@@ -73,6 +76,8 @@ const getAsterisks = async ({
   const newYorkerAsterisk =
     issues.newYorker !== previousIssues.newYorker ? "*" : "";
   const podmassAsterisk = issues.podmass !== previousIssues.podmass ? "*" : "";
+  const needleDropAsterisk =
+    issues.needleDrop !== previousIssues.needleDrop ? "*" : "";
 
   return {
     gastronomicaAsterisk,
@@ -80,6 +85,7 @@ const getAsterisks = async ({
     economistAsterisk,
     newYorkerAsterisk,
     podmassAsterisk,
+    needleDropAsterisk,
   };
 };
 
@@ -99,6 +105,8 @@ const generateIndexHTML = async () => {
   const economistData = await getEconomistData();
   const newYorkerData = await getNewYorkerData();
   const podmassData = await getPodmassData();
+  const needleDropData = await getNeedleDropData();
+  generateHTMLFromData("needledrop.html", needleDropData.fileData);
 
   const {
     gastronomicaAsterisk,
@@ -106,12 +114,14 @@ const generateIndexHTML = async () => {
     economistAsterisk,
     newYorkerAsterisk,
     podmassAsterisk,
+    needleDropAsterisk,
   } = await getAsterisks({
     gastroData,
     cooksIllustratedData,
     economistData,
     newYorkerData,
     podmassData,
+    needleDropData,
   });
 
   const newYorkerChunk = `
@@ -164,6 +174,14 @@ const generateIndexHTML = async () => {
     <br>
   `;
 
+  const needleDropChunk = `
+    <a href="needledrop.html">
+      <h2>The Needle Drop</h2>
+      <p>${needleDropData.title}</p>
+    </a>
+    <br>
+  `;
+
   let fileData = `
     <!doctype html>
       <html>
@@ -194,6 +212,7 @@ const generateIndexHTML = async () => {
           ${cooksIllustratedAsterisk ? cooksIllustratedChunk : ""}
           ${gastronomicaAsterisk ? gastronomicaChunk : ""}
           ${podmassAsterisk ? podmassChunk : ""}
+          ${needleDropAsterisk ? needleDropChunk : ""}
           <a href="older.html">Older</a>
           <br>
         </body>
@@ -215,6 +234,7 @@ const generateIndexHTML = async () => {
         ${!cooksIllustratedAsterisk ? cooksIllustratedChunk : ""}
         ${!gastronomicaAsterisk ? gastronomicaChunk : ""}
         ${!podmassAsterisk ? podmassChunk : ""}
+        ${!needleDropAsterisk ? needleDropChunk : ""}
       </body>
     </html>
   `;
