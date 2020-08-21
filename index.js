@@ -11,6 +11,7 @@ const { getNewYorkerData } = require("./fetchNewYorker");
 const { getHackerNewsData } = require("./fetchHackerNews");
 const { getPodmassData } = require("./fetchPodmass");
 const { getNeedleDropData } = require("./fetchNeedleDrop");
+const { getNPRNewMusicData } = require("./fetchNPRNewMusic");
 
 const generateHTMLFromData = async (filename, fileData) => {
   fs.writeFile(filename, pretty(fileData), (err) => {
@@ -54,6 +55,7 @@ const getAsterisks = async ({
   newYorkerData,
   podmassData,
   needleDropData,
+  allSongsData,
 }) => {
   const previousIssues = await getPreviousIssueDate();
 
@@ -63,7 +65,8 @@ const getAsterisks = async ({
     economist: economistData,
     newYorker: newYorkerData,
     podmass: podmassData,
-    needleDrop: needleDropData,
+    needleDrop: needleDropData.title,
+    allSongs: allSongsData.title,
   };
   writeIssueData(JSON.stringify(issues));
 
@@ -78,6 +81,8 @@ const getAsterisks = async ({
   const podmassAsterisk = issues.podmass !== previousIssues.podmass ? "*" : "";
   const needleDropAsterisk =
     issues.needleDrop !== previousIssues.needleDrop ? "*" : "";
+  const allSongsAsterisk =
+    issues.allSongs !== previousIssues.allSongs ? "*" : "";
 
   return {
     gastronomicaAsterisk,
@@ -86,6 +91,7 @@ const getAsterisks = async ({
     newYorkerAsterisk,
     podmassAsterisk,
     needleDropAsterisk,
+    allSongsAsterisk,
   };
 };
 
@@ -105,8 +111,12 @@ const generateIndexHTML = async () => {
   const economistData = await getEconomistData();
   const newYorkerData = await getNewYorkerData();
   const podmassData = await getPodmassData();
+
   const needleDropData = await getNeedleDropData();
   generateHTMLFromData("needledrop.html", needleDropData.fileData);
+
+  const allSongsData = await getNPRNewMusicData();
+  generateHTMLFromData("allsongs.html", allSongsData.fileData);
 
   const {
     gastronomicaAsterisk,
@@ -115,6 +125,7 @@ const generateIndexHTML = async () => {
     newYorkerAsterisk,
     podmassAsterisk,
     needleDropAsterisk,
+    allSongsAsterisk,
   } = await getAsterisks({
     gastroData,
     cooksIllustratedData,
@@ -122,6 +133,7 @@ const generateIndexHTML = async () => {
     newYorkerData,
     podmassData,
     needleDropData,
+    allSongsData,
   });
 
   const newYorkerChunk = `
@@ -182,6 +194,14 @@ const generateIndexHTML = async () => {
     <br>
   `;
 
+  const allSongsChunk = `
+    <a href="allsongs.html">
+      <h2>All Songs Considered</h2>
+      <p>${allSongsData.title}</p>
+    </a>
+    <br>
+  `;
+
   let fileData = `
     <!doctype html>
       <html>
@@ -213,6 +233,7 @@ const generateIndexHTML = async () => {
           ${gastronomicaAsterisk ? gastronomicaChunk : ""}
           ${podmassAsterisk ? podmassChunk : ""}
           ${needleDropAsterisk ? needleDropChunk : ""}
+          ${allSongsAsterisk ? allSongsChunk : ""}
           <a href="older.html">Older</a>
           <br>
         </body>
@@ -235,6 +256,7 @@ const generateIndexHTML = async () => {
         ${!gastronomicaAsterisk ? gastronomicaChunk : ""}
         ${!podmassAsterisk ? podmassChunk : ""}
         ${!needleDropAsterisk ? needleDropChunk : ""}
+        ${!allSongsAsterisk ? allSongsChunk : ""}
       </body>
     </html>
   `;
