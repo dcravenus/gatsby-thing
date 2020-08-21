@@ -12,6 +12,7 @@ const { getHackerNewsData } = require("./fetchHackerNews");
 const { getPodmassData } = require("./fetchPodmass");
 const { getNeedleDropData } = require("./fetchNeedleDrop");
 const { getNPRNewMusicData } = require("./fetchNPRNewMusic");
+const { getAltLatinoData } = require("./fetchAltLatino");
 
 const generateHTMLFromData = async (filename, fileData) => {
   fs.writeFile(filename, pretty(fileData), (err) => {
@@ -56,6 +57,7 @@ const getAsterisks = async ({
   podmassData,
   needleDropData,
   allSongsData,
+  altLatinoData,
 }) => {
   const previousIssues = await getPreviousIssueDate();
 
@@ -67,6 +69,7 @@ const getAsterisks = async ({
     podmass: podmassData,
     needleDrop: needleDropData.title,
     allSongs: allSongsData.title,
+    altLatino: altLatinoData.title,
   };
   writeIssueData(JSON.stringify(issues));
 
@@ -83,6 +86,8 @@ const getAsterisks = async ({
     issues.needleDrop !== previousIssues.needleDrop ? "*" : "";
   const allSongsAsterisk =
     issues.allSongs !== previousIssues.allSongs ? "*" : "";
+  const altLatinoAsterisk =
+    issues.altLatino !== previousIssues.altLatino ? "*" : "";
 
   return {
     gastronomicaAsterisk,
@@ -92,6 +97,7 @@ const getAsterisks = async ({
     podmassAsterisk,
     needleDropAsterisk,
     allSongsAsterisk,
+    altLatinoAsterisk,
   };
 };
 
@@ -118,6 +124,8 @@ const generateIndexHTML = async () => {
   const allSongsData = await getNPRNewMusicData();
   generateHTMLFromData("allsongs.html", allSongsData.fileData);
 
+  const altLatinoData = await getAltLatinoData();
+
   const {
     gastronomicaAsterisk,
     cooksIllustratedAsterisk,
@@ -126,6 +134,7 @@ const generateIndexHTML = async () => {
     podmassAsterisk,
     needleDropAsterisk,
     allSongsAsterisk,
+    altLatinoAsterisk,
   } = await getAsterisks({
     gastroData,
     cooksIllustratedData,
@@ -134,6 +143,7 @@ const generateIndexHTML = async () => {
     podmassData,
     needleDropData,
     allSongsData,
+    altLatinoData,
   });
 
   const newYorkerChunk = `
@@ -202,6 +212,13 @@ const generateIndexHTML = async () => {
     <br>
   `;
 
+  const altLatinoChunk = `
+    <a href="${altLatinoData.url}">
+      <h2>Alt.Latino</h2>
+      <p>${altLatinoData.title}</p>
+    </a>
+  `;
+
   let fileData = `
     <!doctype html>
       <html>
@@ -234,6 +251,7 @@ const generateIndexHTML = async () => {
           ${podmassAsterisk ? podmassChunk : ""}
           ${needleDropAsterisk ? needleDropChunk : ""}
           ${allSongsAsterisk ? allSongsChunk : ""}
+          ${altLatinoAsterisk ? altLatinoChunk : ""}
           <a href="older.html">Older</a>
           <br>
         </body>
@@ -257,6 +275,7 @@ const generateIndexHTML = async () => {
         ${!podmassAsterisk ? podmassChunk : ""}
         ${!needleDropAsterisk ? needleDropChunk : ""}
         ${!allSongsAsterisk ? allSongsChunk : ""}
+        ${!altLatinoAsterisk ? altLatinoChunk : ""}
       </body>
     </html>
   `;
