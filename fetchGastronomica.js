@@ -22,6 +22,10 @@ exports.getGastronomicaData = async () => {
       latestArticle = article;
     }
   });
+  
+  if(!latestArticle) {
+    return null;
+  }
 
   const title = latestArticle.querySelector(".entry-title").textContent;
   const coverImgUrl = latestArticle.querySelector("p img").src;

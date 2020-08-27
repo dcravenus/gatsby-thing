@@ -59,10 +59,11 @@ const getAsterisks = async ({
   allSongsData,
   altLatinoData,
 }) => {
+
   const previousIssues = await getPreviousIssueDate();
 
   const issues = {
-    gastronomica: gastroData.title,
+    gastronomica: gastroData ? gastroData.title : previousIssues.gastronomica,
     cooksIllustrated: cooksIllustratedData.issueDate,
     economist: economistData,
     newYorker: newYorkerData,
@@ -98,6 +99,7 @@ const getAsterisks = async ({
     needleDropAsterisk,
     allSongsAsterisk,
     altLatinoAsterisk,
+    gastronomicaTitle: issues.gastronomica
   };
 };
 
@@ -112,7 +114,9 @@ const generateIndexHTML = async () => {
 
   generateHTMLFromData("hackernews.html", await getHackerNewsData());
   const gastroData = await getGastronomicaData();
-  generateHTMLFromData("gastronomica.html", gastroData.fileData);
+  if(gastroData) {
+    generateHTMLFromData("gastronomica.html", gastroData.fileData);
+  }
   const cooksIllustratedData = await getCooksIllustratedData();
   const economistData = await getEconomistData();
   const newYorkerData = await getNewYorkerData();
@@ -135,6 +139,7 @@ const generateIndexHTML = async () => {
     needleDropAsterisk,
     allSongsAsterisk,
     altLatinoAsterisk,
+    gastronomicaTitle
   } = await getAsterisks({
     gastroData,
     cooksIllustratedData,
@@ -184,7 +189,7 @@ const generateIndexHTML = async () => {
   const gastronomicaChunk = `
     <a href="gastronomica.html">
       <h2>Gastronomica</h2>
-      <p>${gastroData.title}</p>
+      <p>${gastronomicaTitle}</p>
     </a>
     <br>
   `;
