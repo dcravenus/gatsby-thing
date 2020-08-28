@@ -13,6 +13,7 @@ const { getPodmassData } = require("./fetchPodmass");
 const { getNeedleDropData } = require("./fetchNeedleDrop");
 const { getNPRNewMusicData } = require("./fetchNPRNewMusic");
 const { getAltLatinoData } = require("./fetchAltLatino");
+const { getTVData } = require("./fetchTV");
 
 const generateHTMLFromData = async (filename, fileData) => {
   fs.writeFile(filename, pretty(fileData), (err) => {
@@ -104,6 +105,7 @@ const getAsterisks = async ({
 };
 
 const generateIndexHTML = async () => {
+  const tvChunk = await getTVData();
   generateHTMLFromData("nyt.html", await getNYTData());
   generateHTMLFromData("sltrib.html", await getSLTribData());
 
@@ -257,6 +259,7 @@ const generateIndexHTML = async () => {
           ${needleDropAsterisk ? needleDropChunk : ""}
           ${allSongsAsterisk ? allSongsChunk : ""}
           ${altLatinoAsterisk ? altLatinoChunk : ""}
+          ${tvChunk}
           <a href="older.html">Older</a>
           <br>
         </body>
@@ -281,6 +284,10 @@ const generateIndexHTML = async () => {
         ${!needleDropAsterisk ? needleDropChunk : ""}
         ${!allSongsAsterisk ? allSongsChunk : ""}
         ${!altLatinoAsterisk ? altLatinoChunk : ""}
+        <a href="tv.html">
+          <h2>TV Episodes</h2>
+        </a>
+        <br>
       </body>
     </html>
   `;
