@@ -5,9 +5,7 @@ const { getSLTribData } = require("./fetchSLTrib");
 const { getSeriousEatsData } = require("./fetchSeriousEats");
 const { getNYTData } = require("./fetchNYT");
 const { getGastronomicaData } = require("./fetchGastronomica");
-const { getCooksIllustratedData } = require("./fetchCooksIllustrated");
 const { getEconomistData } = require("./fetchEconomist");
-// const { getNewYorkerData } = require("./fetchNewYorker");
 const { getHackerNewsData } = require("./fetchHackerNews");
 const { getPodmassData } = require("./fetchPodmass");
 const { getNeedleDropData } = require("./fetchNeedleDrop");
@@ -15,7 +13,8 @@ const { getNPRNewMusicData } = require("./fetchNPRNewMusic");
 const { getAltLatinoData } = require("./fetchAltLatino");
 const { getTVData } = require("./fetchTV");
 const { getNewYorkerCrosswordData } = require("./fetchNewYorkerCrossword");
-const { getNYBooksData } = require("./fetchNYBooks");
+const { getLibraryMagsData } = require("./fetchLibraryMags");
+const { getAtlanticData } = require("./fetchAtlantic");
 
 const generateHTMLFromData = async (filename, fileData) => {
   fs.writeFile(filename, pretty(fileData), (err) => {
@@ -54,42 +53,32 @@ const writeIssueData = async (fileData) => {
 
 const getAsterisks = async ({
   gastroData,
-  cooksIllustratedData,
   economistData,
-  // newYorkerData,
   podmassData,
   needleDropData,
   allSongsData,
   altLatinoData,
   crosswordData,
   crypticData,
-  nyBooksData,
 }) => {
   const previousIssues = await getPreviousIssueDate();
 
   const issues = {
     gastronomica: gastroData ? gastroData.title : previousIssues.gastronomica,
-    cooksIllustrated: cooksIllustratedData.issueDate,
     economist: economistData,
-    // newYorker: newYorkerData,
     podmass: podmassData,
     needleDrop: needleDropData.title,
     allSongs: allSongsData.title,
     altLatino: altLatinoData.title,
-    crossword: crosswordData.title,
-    cryptic: crypticData.title,
-    nyBooks: nyBooksData.heading,
+    crossword: crosswordData.href,
+    cryptic: crypticData.href,
   };
   writeIssueData(JSON.stringify(issues));
 
   const gastronomicaAsterisk =
     issues.gastronomica !== previousIssues.gastronomica ? "*" : "";
-  const cooksIllustratedAsterisk =
-    issues.cooksIllustrated !== previousIssues.cooksIllustrated ? "*" : "";
   const economistAsterisk =
     issues.economist !== previousIssues.economist ? "*" : "";
-  // const newYorkerAsterisk =
-  //   issues.newYorker !== previousIssues.newYorker ? "*" : "";
   const podmassAsterisk = issues.podmass !== previousIssues.podmass ? "*" : "";
   const needleDropAsterisk =
     issues.needleDrop !== previousIssues.needleDrop ? "*" : "";
@@ -100,13 +89,10 @@ const getAsterisks = async ({
   const crosswordAsterisk =
     issues.crossword !== previousIssues.crossword ? "*" : "";
   const crypticAsterisk = issues.cryptic !== previousIssues.cryptic ? "*" : "";
-  const nyBooksAsterisk = issues.nyBooks !== previousIssues.nyBooks ? "*" : "";
 
   return {
     gastronomicaAsterisk,
-    cooksIllustratedAsterisk,
     economistAsterisk,
-    // newYorkerAsterisk,
     podmassAsterisk,
     needleDropAsterisk,
     allSongsAsterisk,
@@ -114,7 +100,6 @@ const getAsterisks = async ({
     gastronomicaTitle: issues.gastronomica,
     crosswordAsterisk,
     crypticAsterisk,
-    nyBooksAsterisk,
   };
 };
 
@@ -133,9 +118,7 @@ const generateIndexHTML = async () => {
   if (gastroData) {
     generateHTMLFromData("gastronomica.html", gastroData.fileData);
   }
-  const cooksIllustratedData = await getCooksIllustratedData();
   const economistData = await getEconomistData();
-  // const newYorkerData = await getNewYorkerData();
   const podmassData = await getPodmassData();
 
   const needleDropData = await getNeedleDropData();
@@ -148,13 +131,14 @@ const generateIndexHTML = async () => {
 
   const { crosswordData, crypticData } = await getNewYorkerCrosswordData();
 
-  const nyBooksData = await getNYBooksData();
+  const {
+    oldLibraryMagsChunk,
+    newLibraryMagsChunk,
+  } = await getLibraryMagsData();
 
   const {
     gastronomicaAsterisk,
-    cooksIllustratedAsterisk,
     economistAsterisk,
-    // newYorkerAsterisk,
     podmassAsterisk,
     needleDropAsterisk,
     allSongsAsterisk,
@@ -162,41 +146,21 @@ const generateIndexHTML = async () => {
     gastronomicaTitle,
     crosswordAsterisk,
     crypticAsterisk,
-    nyBooksAsterisk,
   } = await getAsterisks({
     gastroData,
-    cooksIllustratedData,
     economistData,
-    // newYorkerData,
     podmassData,
     needleDropData,
     allSongsData,
     altLatinoData,
     crosswordData,
     crypticData,
-    nyBooksData,
   });
-
-  // const newYorkerChunk = `
-  //     <a href="https://www.newyorker.com/magazine">
-  //       <h2>The New Yorker</h2>
-  //       <p>${newYorkerData}</p>
-  //     </a>
-  //     <br>
-  //   `;
 
   const economistChunk = `
       <a href="https://www.economist.com/weeklyedition">
         <h2>The Economist</h2>
         <p>${economistData}</p>
-      </a>
-      <br>
-    `;
-
-  const cooksIllustratedChunk = `
-      <a href="${cooksIllustratedData.url}">
-        <h2>Cook's Illustrated${cooksIllustratedAsterisk}</h2>
-        <p>${cooksIllustratedData.issueDate}</p>
       </a>
       <br>
     `;
@@ -267,14 +231,6 @@ const generateIndexHTML = async () => {
     <br>
   `;
 
-  const nyBooksChunk = `
-    <a href="${nyBooksData.href}">
-      <h2>The New York Review of Books</h2>
-      <p>${nyBooksData.heading}</p>
-    </a>
-    <br>
-  `;
-
   let fileData = `
     <!doctype html>
       <html>
@@ -300,11 +256,9 @@ const generateIndexHTML = async () => {
             <p>Best 25 Stories</p>
           </a>
           <br>
-          ${/* newYorkerAsterisk ? newYorkerChunk : "" */ ""}
           ${economistAsterisk ? economistChunk : ""}
-          ${cooksIllustratedAsterisk ? cooksIllustratedChunk : ""}
           ${gastronomicaAsterisk ? gastronomicaChunk : ""}
-          ${nyBooksAsterisk ? nyBooksChunk : ""}
+          ${newLibraryMagsChunk}
           ${podmassAsterisk ? podmassChunk : ""}
           ${needleDropAsterisk ? needleDropChunk : ""}
           ${allSongsAsterisk ? allSongsChunk : ""}
@@ -328,11 +282,9 @@ const generateIndexHTML = async () => {
       <link href='index.css' rel='stylesheet'></style>
       </head>
       <body>
-        ${/* !newYorkerAsterisk ? newYorkerChunk : "" */ ""}
         ${!economistAsterisk ? economistChunk : ""}
-        ${!cooksIllustratedAsterisk ? cooksIllustratedChunk : ""}
         ${!gastronomicaAsterisk ? gastronomicaChunk : ""}
-        ${!nyBooksAsterisk ? nyBooksChunk : ""}
+        ${oldLibraryMagsChunk}
         ${!podmassAsterisk ? podmassChunk : ""}
         ${!needleDropAsterisk ? needleDropChunk : ""}
         ${!allSongsAsterisk ? allSongsChunk : ""}

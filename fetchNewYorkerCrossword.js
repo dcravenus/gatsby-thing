@@ -9,7 +9,7 @@ const getCrypticData = async () => {
   const document = dom.window.document;
   const link = document.querySelector("header+div a");
   return {
-    href: "https://www.newyorker.com/" + link.href,
+    href: "https://www.newyorker.com" + link.href,
     heading: link.textContent,
   };
 };
