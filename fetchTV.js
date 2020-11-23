@@ -15,6 +15,7 @@ const showIds = [
   7522,
   1864,
   44789,
+  35073,
 ];
 
 const getOldTVData = async () => {
