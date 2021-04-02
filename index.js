@@ -10,10 +10,7 @@ const { getHackerNewsData } = require("./fetchHackerNews");
 const { getPodmassData } = require("./fetchPodmass");
 const { getNeedleDropData } = require("./fetchNeedleDrop");
 const { getNPRNewMusicData } = require("./fetchNPRNewMusic");
-const { getAltLatinoData } = require("./fetchAltLatino");
 const { getTVData } = require("./fetchTV");
-const { getNewYorkerCrosswordData } = require("./fetchNewYorkerCrossword");
-const { getLibraryMagsData } = require("./fetchLibraryMags");
 const { getAtlanticData } = require("./fetchAtlantic");
 
 const generateHTMLFromData = async (filename, fileData) => {
@@ -57,9 +54,6 @@ const getAsterisks = async ({
   podmassData,
   needleDropData,
   allSongsData,
-  altLatinoData,
-  crosswordData,
-  crypticData,
   atlanticData,
 }) => {
   const previousIssues = await getPreviousIssueDate();
@@ -70,9 +64,6 @@ const getAsterisks = async ({
     podmass: podmassData,
     needleDrop: needleDropData.title,
     allSongs: allSongsData.title,
-    altLatino: altLatinoData.title,
-    crossword: crosswordData.href,
-    cryptic: crypticData.href,
     atlantic: atlanticData.title,
   };
   writeIssueData(JSON.stringify(issues));
@@ -86,11 +77,6 @@ const getAsterisks = async ({
     issues.needleDrop !== previousIssues.needleDrop ? "*" : "";
   const allSongsAsterisk =
     issues.allSongs !== previousIssues.allSongs ? "*" : "";
-  const altLatinoAsterisk =
-    issues.altLatino !== previousIssues.altLatino ? "*" : "";
-  const crosswordAsterisk =
-    issues.crossword !== previousIssues.crossword ? "*" : "";
-  const crypticAsterisk = issues.cryptic !== previousIssues.cryptic ? "*" : "";
   const atlanticAsterisk =
     issues.atlantic !== previousIssues.atlantic ? "*" : "";
 
@@ -100,10 +86,7 @@ const getAsterisks = async ({
     podmassAsterisk,
     needleDropAsterisk,
     allSongsAsterisk,
-    altLatinoAsterisk,
     gastronomicaTitle: issues.gastronomica,
-    crosswordAsterisk,
-    crypticAsterisk,
     atlanticAsterisk,
   };
 };
@@ -135,25 +118,13 @@ const generateIndexHTML = async () => {
   const atlanticData = await getAtlanticData();
   generateHTMLFromData("atlantic.html", atlanticData.fileData);
 
-  const altLatinoData = await getAltLatinoData();
-
-  const { crosswordData, crypticData } = await getNewYorkerCrosswordData();
-
-  const {
-    oldLibraryMagsChunk,
-    newLibraryMagsChunk,
-  } = await getLibraryMagsData();
-
   const {
     gastronomicaAsterisk,
     economistAsterisk,
     podmassAsterisk,
     needleDropAsterisk,
     allSongsAsterisk,
-    altLatinoAsterisk,
     gastronomicaTitle,
-    crosswordAsterisk,
-    crypticAsterisk,
     atlanticAsterisk,
   } = await getAsterisks({
     gastroData,
@@ -161,9 +132,6 @@ const generateIndexHTML = async () => {
     podmassData,
     needleDropData,
     allSongsData,
-    altLatinoData,
-    crosswordData,
-    crypticData,
     atlanticData,
   });
 
@@ -217,30 +185,6 @@ const generateIndexHTML = async () => {
     <br>
   `;
 
-  const altLatinoChunk = `
-    <a href="${altLatinoData.url}">
-      <h2>Alt.Latino</h2>
-      <p>${altLatinoData.title}</p>
-    </a>
-    <br>
-  `;
-
-  const crosswordChunk = `
-    <a href="${crosswordData.href}">
-      <h2>The New Yorker Crossword</h2>
-      <p>${crosswordData.heading}</p>
-    </a>
-    <br>
-  `;
-
-  const crypticChunk = `
-    <a href="${crypticData.href}">
-      <h2>The New Yorker Cryptic Crossword</h2>
-      <p>${crypticData.heading}</p>
-    </a>
-    <br>
-  `;
-
   const atlanticChunk = `
   <a href="atlantic.html">
     <h2>The Atlantic</h2>
@@ -276,14 +220,10 @@ const generateIndexHTML = async () => {
           <br>
           ${economistAsterisk ? economistChunk : ""}
           ${gastronomicaAsterisk ? gastronomicaChunk : ""}
-          ${newLibraryMagsChunk}
           ${atlanticAsterisk ? atlanticChunk : ""}
           ${podmassAsterisk ? podmassChunk : ""}
           ${needleDropAsterisk ? needleDropChunk : ""}
           ${allSongsAsterisk ? allSongsChunk : ""}
-          ${altLatinoAsterisk ? altLatinoChunk : ""}
-          ${crosswordAsterisk ? crosswordChunk : ""}
-          ${crypticAsterisk ? crypticChunk : ""}
           ${tvChunk}
           <a href="older.html">Older</a>
           <br>
@@ -303,14 +243,10 @@ const generateIndexHTML = async () => {
       <body>
         ${!economistAsterisk ? economistChunk : ""}
         ${!gastronomicaAsterisk ? gastronomicaChunk : ""}
-        ${oldLibraryMagsChunk}
         ${!atlanticAsterisk ? atlanticChunk : ""}
         ${!podmassAsterisk ? podmassChunk : ""}
         ${!needleDropAsterisk ? needleDropChunk : ""}
         ${!allSongsAsterisk ? allSongsChunk : ""}
-        ${!altLatinoAsterisk ? altLatinoChunk : ""}
-        ${!crosswordAsterisk ? crosswordChunk : ""}
-        ${!crypticAsterisk ? crypticChunk : ""}
         <a href="tv.html">
           <h2>TV Episodes</h2>
         </a>
