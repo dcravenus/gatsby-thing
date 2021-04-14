@@ -1,0 +1,76 @@
+@font-face {
+  font-family: "Cooper Hewitt";
+  src: url(./CooperHewitt-WebFonts-public/CooperHewitt-Book.woff) format("woff"),
+    url(./CooperHewitt-WebFonts-public/CooperHewitt-Book.svg) format("svg");
+}
+
+@font-face {
+  font-family: "Cooper Hewitt";
+  src: url(./CooperHewitt-WebFonts-public/CooperHewitt-Bold.woff) format("woff");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "Cooper Hewitt";
+  src: url(./CooperHewitt-WebFonts-public/CooperHewitt-BoldItalic.woff)
+    format("woff");
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Cooper Hewitt";
+  src: url(./CooperHewitt-WebFonts-public/CooperHewitt-BookItalic.woff)
+    format("woff");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Cooper Hewitt";
+  src: url(./CooperHewitt-WebFonts-public/CooperHewitt-Semibold.woff)
+    format("woff");
+  font-weight: 500;
+}
+
+body {
+  font-family: "Cooper Hewitt", sans-serif;
+  font-size: 110%;
+  color: #333;
+  text-align: center;
+}
+
+a {
+  display: inline-block;
+  color: #333;
+  text-decoration: none;
+  margin-bottom: 1em;
+  font-size: 110%;
+}
+
+img {
+  width: 300px;
+  height: 200px;
+  object-fit: cover;
+}
+
+#recipes-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#recipes-wrapper div {
+  margin: 0 20px;
+  width: 300px;
+}
+
+#recipes-wrapper div p {
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  font-size: 110%;
+  overflow: hidden;
+  width: 300px;
+  height: 54px;
+}
