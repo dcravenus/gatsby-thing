@@ -32,15 +32,15 @@ exports.getNPRNewMusicData = async () => {
 
   const titleString = items[0].title;
   items = items.map((item) => {
-    const regex = /\d\. (.+?) — (.+?)<br\/>Featured Songs?: (.+?)<br\/>/g;
+    const regex = /\d\. (.+?) (—|-) (.+?)<br\/>Featured Songs?: (.+?)<br\/>/g;
 
     const outputArray = [];
     let regexResponseArray;
     while ((regexResponseArray = regex.exec(item.content)) !== null) {
       outputArray.push({
         artist: regexResponseArray[1],
-        album: regexResponseArray[2],
-        titles: [...regexResponseArray[3].matchAll(/"(.+?),?"/g)].map(
+        album: regexResponseArray[3],
+        titles: [...regexResponseArray[4].matchAll(/"(.+?),?"/g)].map(
           (resp) => resp[1]
         ),
       });
