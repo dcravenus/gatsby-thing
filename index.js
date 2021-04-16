@@ -12,6 +12,7 @@ const { getNeedleDropData } = require("./fetchNeedleDrop");
 const { getNPRNewMusicData } = require("./fetchNPRNewMusic");
 const { getTVData } = require("./fetchTV");
 const { getAtlanticData } = require("./fetchAtlantic");
+const { getCooksIllustratedData } = require("./fetchCooksIllustrated");
 
 const generateHTMLFromData = async (filename, fileData) => {
   fs.writeFile(filename, pretty(fileData), (err) => {
@@ -55,6 +56,7 @@ const getAsterisks = async ({
   needleDropData,
   allSongsData,
   atlanticData,
+  cooksIllustratedData,
 }) => {
   const previousIssues = await getPreviousIssueDate();
 
@@ -65,6 +67,7 @@ const getAsterisks = async ({
     needleDrop: needleDropData.title,
     allSongs: allSongsData.title,
     atlantic: atlanticData.title,
+    cooksIllustrated: cooksIllustratedData,
   };
   writeIssueData(JSON.stringify(issues));
 
@@ -79,6 +82,8 @@ const getAsterisks = async ({
     issues.allSongs !== previousIssues.allSongs ? "*" : "";
   const atlanticAsterisk =
     issues.atlantic !== previousIssues.atlantic ? "*" : "";
+  const cooksIllustratedAsterisk =
+    issues.cooksIllustrated !== previousIssues.cooksIllustrated ? "*" : "";
 
   return {
     gastronomicaAsterisk,
@@ -88,6 +93,7 @@ const getAsterisks = async ({
     allSongsAsterisk,
     gastronomicaTitle: issues.gastronomica,
     atlanticAsterisk,
+    cooksIllustratedAsterisk,
   };
 };
 
@@ -118,6 +124,8 @@ const generateIndexHTML = async () => {
   const atlanticData = await getAtlanticData();
   generateHTMLFromData("atlantic.html", atlanticData.fileData);
 
+  const cooksIllustratedData = await getCooksIllustratedData();
+
   const {
     gastronomicaAsterisk,
     economistAsterisk,
@@ -126,6 +134,7 @@ const generateIndexHTML = async () => {
     allSongsAsterisk,
     gastronomicaTitle,
     atlanticAsterisk,
+    cooksIllustratedAsterisk,
   } = await getAsterisks({
     gastroData,
     economistData,
@@ -133,6 +142,7 @@ const generateIndexHTML = async () => {
     needleDropData,
     allSongsData,
     atlanticData,
+    cooksIllustratedData,
   });
 
   const economistChunk = `
@@ -191,7 +201,15 @@ const generateIndexHTML = async () => {
     <p>${atlanticData.title}</p>
   </a>
   <br>
-`;
+  `;
+
+  const cooksIllustratedChunk = `
+  <a href="${cooksIllustratedData.url}">
+    <h2>Cook's Illustrated</h2>
+    <p>${cooksIllustratedData.title}</p>
+  </a>
+  <br>
+  `;
 
   let fileData = `
     <!doctype html>
@@ -221,6 +239,7 @@ const generateIndexHTML = async () => {
           ${economistAsterisk ? economistChunk : ""}
           ${gastronomicaAsterisk ? gastronomicaChunk : ""}
           ${atlanticAsterisk ? atlanticChunk : ""}
+          ${cooksIllustratedAsterisk ? cooksIllustratedChunk : ""}
           ${podmassAsterisk ? podmassChunk : ""}
           ${needleDropAsterisk ? needleDropChunk : ""}
           ${allSongsAsterisk ? allSongsChunk : ""}
@@ -244,6 +263,7 @@ const generateIndexHTML = async () => {
         ${!economistAsterisk ? economistChunk : ""}
         ${!gastronomicaAsterisk ? gastronomicaChunk : ""}
         ${!atlanticAsterisk ? atlanticChunk : ""}
+        ${!cooksIllustratedAsterisk ? cooksIllustratedChunk : ""}
         ${!podmassAsterisk ? podmassChunk : ""}
         ${!needleDropAsterisk ? needleDropChunk : ""}
         ${!allSongsAsterisk ? allSongsChunk : ""}
