@@ -67,7 +67,7 @@ const getAsterisks = async ({
     needleDrop: needleDropData.title,
     allSongs: allSongsData.title,
     atlantic: atlanticData.title,
-    cooksIllustrated: cooksIllustratedData,
+    cooksIllustrated: cooksIllustratedData.title,
   };
   writeIssueData(JSON.stringify(issues));
 
