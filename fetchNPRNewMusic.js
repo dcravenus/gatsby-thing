@@ -15,6 +15,7 @@ const getYouTubeUrlForSearchString = async (page, query) => {
   const dom = new JSDOM(text);
   const document = dom.window.document;
 
+
   return "https://youtube.com" + document.querySelector("#video-title").href;
 };
 
@@ -32,15 +33,15 @@ exports.getNPRNewMusicData = async () => {
 
   const titleString = items[0].title;
   items = items.map((item) => {
-    const regex = /\d\. (.+?) (—|-) (.+?)<br\/>Featured Songs?: (.+?)<br\/>/g;
+    const regex = /\d\. (.+?) (—|-)(<em>)? (.+?)<br\/>Featured Songs?: (.+?)<br\/>/g;
 
     const outputArray = [];
     let regexResponseArray;
     while ((regexResponseArray = regex.exec(item.content)) !== null) {
       outputArray.push({
         artist: regexResponseArray[1],
-        album: regexResponseArray[3],
-        titles: [...regexResponseArray[4].matchAll(/"(.+?),?"/g)].map(
+        album: regexResponseArray[4],
+        titles: [...regexResponseArray[5].matchAll(/"(.+?),?"/g)].map(
           (resp) => resp[1]
         ),
       });
